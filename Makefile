@@ -22,7 +22,7 @@ run:
 
 # Run the program in debug mode (pdb)
 debug:
-	$(PY) -m pdb $(MAIN)
+	$(PY) -m pdb $(MAIN) $(CONFIG)
 
 # Remove temporary and cache files
 clean:
@@ -31,8 +31,8 @@ clean:
 
 # Mandatory linting rules
 lint:
-	$(FLAKE8) .
-	$(MYPY) . \
+	$(FLAKE8) --exclude=$(VENV) .
+	$(MYPY) --exclude $(VENV) . \
 		--warn-return-any \
 		--warn-unused-ignores \
 		--ignore-missing-imports \
@@ -41,5 +41,5 @@ lint:
 
 # Optional strict linting
 lint-strict:
-	$(FLAKE8) .
-	$(MYPY) . --strict
+	$(FLAKE8) --exclude=$(VENV) .
+	$(MYPY) --exclude $(VENV) . --strict

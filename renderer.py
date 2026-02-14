@@ -1,12 +1,16 @@
+"""Terminal-based ASCII maze renderer."""
+
 from typing import Iterable, Tuple
 
 from maze import Maze
-from cell import TOP, RIGHT, BOTTOM, LEFT
+from cell import RIGHT, BOTTOM
 
 Point = Tuple[int, int]
 
 
 class Colors:
+    """ANSI colour escape sequences."""
+
     WALL = "\033[97m"
     PATH = "\033[92m"
     ENTRY = "\033[95m"
@@ -16,16 +20,25 @@ class Colors:
 
 
 class MazeRenderer:
+    """Render a maze in the terminal with colours."""
+
     def __init__(self) -> None:
+        """Set the default wall colour."""
         self.wall_color = Colors.WALL
 
     def cycle_wall_color(self) -> None:
+        """Rotate to the next wall colour.
+
+        Cycles through white, blue, yellow,
+        green and red.
+        """
         colors = [
             "\033[97m", "\033[94m", "\033[93m",
             "\033[92m", "\033[91m",
         ]
+        idx = colors.index(self.wall_color)
         self.wall_color = colors[
-            (colors.index(self.wall_color) + 1) % len(colors)
+            (idx + 1) % len(colors)
         ]
 
     def render(
@@ -35,40 +48,59 @@ class MazeRenderer:
         exit_: Point,
         path: Iterable[Point] | None = None,
     ) -> None:
+        """Print the maze to stdout.
+
+        Args:
+            maze: The Maze to render.
+            entry: Entry cell coordinates.
+            exit_: Exit cell coordinates.
+            path: Optional path to highlight.
+        """
         path_set = set(path) if path else set()
 
         print("\033[H\033[J", end="")
 
-        top_border = self.wall_color + "+" + ("---+" * maze.width) + Colors.RESET
+        wc = self.wall_color
+        rst = Colors.RESET
+        top_border = (
+            wc + "+" + ("---+" * maze.width) + rst
+        )
         print(top_border)
 
         for y in range(maze.height):
-            top = self.wall_color + "|" + Colors.RESET
-            bottom = self.wall_color + "+" + Colors.RESET
+            top = wc + "|" + rst
+            bottom = wc + "+" + rst
 
             for x in range(maze.width):
                 cell = maze.cell(x, y)
 
                 if (x, y) == entry:
-                    top += Colors.ENTRY + " E " + Colors.RESET
+                    body = Colors.ENTRY + " E " + rst
                 elif (x, y) == exit_:
-                    top += Colors.EXIT + " X " + Colors.RESET
+                    body = Colors.EXIT + " X " + rst
                 elif (x, y) in path_set:
-                    top += Colors.PATH + " · " + Colors.RESET
+                    body = Colors.PATH + " · " + rst
                 elif cell.walls == 0xF:
-                    top += Colors.FORTY_TWO + "███" + Colors.RESET
+                    ft = Colors.FORTY_TWO
+                    body = ft + "███" + rst
                 else:
-                    top += "   "
+                    body = "   "
+                top += body
 
                 top += (
-                    self.wall_color + "|" + Colors.RESET
+                    wc + "|" + rst
                     if cell.walls & RIGHT
                     else " "
                 )
 
-                wall_segment = self.wall_color + "---" + Colors.RESET if cell.walls & BOTTOM else "   "
-                corner_segment = self.wall_color + "+" + Colors.RESET
-                bottom += wall_segment + corner_segment
+                has_bottom = cell.walls & BOTTOM
+                wall_seg = (
+                    wc + "---" + rst
+                    if has_bottom
+                    else "   "
+                )
+                corner = wc + "+" + rst
+                bottom += wall_seg + corner
 
             print(top)
             print(bottom)

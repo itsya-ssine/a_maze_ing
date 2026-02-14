@@ -1,3 +1,5 @@
+"""Module to stamp the 42 pattern onto a maze."""
+
 from maze import Maze
 
 
@@ -6,6 +8,16 @@ def apply_42_pattern(
     entry: tuple[int, int],
     exit_pt: tuple[int, int],
 ) -> None:
+    """Close all walls of cells forming a '42' pattern.
+
+    Args:
+        maze: The Maze instance to stamp on.
+        entry: Entry coordinates.
+        exit_pt: Exit coordinates.
+
+    Raises:
+        RuntimeError: If entry or exit overlaps the pattern.
+    """
     cx = maze.width // 2 - 4
     cy = maze.height // 2 - 2
 
@@ -24,10 +36,14 @@ def apply_42_pattern(
     pattern_cells = {(cx + dx, cy + dy) for dx, dy in pattern}
 
     if entry in pattern_cells:
-        raise RuntimeError(f"ENTRY {entry} lies inside the 42 pattern.")
+        raise RuntimeError(
+            f"ENTRY {entry} lies inside the 42 pattern."
+        )
 
     if exit_pt in pattern_cells:
-        raise RuntimeError(f"EXIT {exit_pt} lies inside the 42 pattern.")
+        raise RuntimeError(
+            f"EXIT {exit_pt} lies inside the 42 pattern."
+        )
 
     for x, y in pattern_cells:
         if maze.inside(x, y):

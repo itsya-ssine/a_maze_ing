@@ -1,10 +1,24 @@
-from typing import Dict, Tuple
+"""Configuration file parser for maze settings."""
 
+from typing import Dict, Optional, Tuple, Union
 
-type ConfigDict = Dict[str, object]
+ConfigDict = Dict[
+    str, Union[int, str, bool, Tuple[int, int], None]
+]
 
 
 def read_config(path: str) -> ConfigDict:
+    """Parse a configuration file and return settings.
+
+    Args:
+        path: Path to the configuration file.
+
+    Returns:
+        A dict with typed configuration values.
+
+    Raises:
+        RuntimeError: If the file is unreadable or invalid.
+    """
     raw: Dict[str, str] = {}
 
     try:
@@ -44,7 +58,17 @@ def read_config(path: str) -> ConfigDict:
     return _convert_config(raw)
 
 
-def _validate_required_keys(config: Dict[str, str]) -> None:
+def _validate_required_keys(
+    config: Dict[str, str],
+) -> None:
+    """Check that all mandatory keys are present.
+
+    Args:
+        config: Raw key-value pairs from the file.
+
+    Raises:
+        RuntimeError: If a required key is absent.
+    """
     required_keys = {
         "WIDTH",
         "HEIGHT",
@@ -59,7 +83,20 @@ def _validate_required_keys(config: Dict[str, str]) -> None:
             raise RuntimeError(f"Missing mandatory key: {key}")
 
 
-def _convert_config(raw: Dict[str, str]) -> ConfigDict:
+def _convert_config(
+    raw: Dict[str, str],
+) -> ConfigDict:
+    """Convert raw strings to typed config values.
+
+    Args:
+        raw: Raw key-value pairs from the file.
+
+    Returns:
+        A dict with properly typed values.
+
+    Raises:
+        RuntimeError: If a value cannot be converted.
+    """
     try:
         width: int = int(raw["WIDTH"])
         height: int = int(raw["HEIGHT"])
@@ -80,6 +117,15 @@ def _convert_config(raw: Dict[str, str]) -> ConfigDict:
     else:
         raise RuntimeError("PERFECT must be True or False")
 
+    seed: Optional[int] = None
+    if "SEED" in raw and raw["SEED"]:
+        try:
+            seed = int(raw["SEED"])
+        except ValueError as exc:
+            raise RuntimeError(
+                "SEED must be an integer"
+            ) from exc
+
     return {
         "WIDTH": width,
         "HEIGHT": height,
@@ -87,10 +133,25 @@ def _convert_config(raw: Dict[str, str]) -> ConfigDict:
         "EXIT": exit_,
         "OUTPUT_FILE": output_file,
         "PERFECT": perfect,
+        "SEED": seed,
     }
 
 
-def _parse_coordinates(value: str, name: str) -> Tuple[int, int]:
+def _parse_coordinates(
+    value: str, name: str
+) -> Tuple[int, int]:
+    """Parse 'x,y' string into a tuple of ints.
+
+    Args:
+        value: The raw string value.
+        name: Key name for error messages.
+
+    Returns:
+        A tuple of (x, y) integers.
+
+    Raises:
+        RuntimeError: If the format is invalid.
+    """
     try:
         x_str, y_str = value.split(",")
         return int(x_str), int(y_str)

@@ -1,3 +1,5 @@
+"""Cell module defining the Cell dataclass and wall constants."""
+
 from dataclasses import dataclass
 
 
@@ -9,5 +11,7 @@ LEFT: int = 8
 
 @dataclass
 class Cell:
+    """Represent a single maze cell with walls and visited state."""
+
     walls: int = TOP | RIGHT | BOTTOM | LEFT
     visited: bool = False
