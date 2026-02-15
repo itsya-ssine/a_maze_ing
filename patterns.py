@@ -50,3 +50,11 @@ def apply_42_pattern(
             cell = maze.cell(x, y)
             cell.walls = 0xF
             cell.visited = True
+            if y > 0 and maze.inside(x, y - 1):
+                maze.add_wall(x, y - 1, 0x4)
+            if y < maze.height - 1 and maze.inside(x, y + 1):
+                maze.add_wall(x, y + 1, 0x1)
+            if x > 0 and maze.inside(x - 1, y):
+                maze.add_wall(x - 1, y, 0x2)
+            if x < maze.width - 1 and maze.inside(x + 1, y):
+                maze.add_wall(x + 1, y, 0x8)

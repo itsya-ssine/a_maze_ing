@@ -56,3 +56,15 @@ class Maze:
             wall: Bitmask of the wall to remove.
         """
         self.cell(x, y).walls &= ~wall
+
+    def add_wall(
+        self, x: int, y: int, wall: int
+    ) -> None:
+        """Add a wall to the cell at (x, y).
+
+        Args:
+            x: Column index.
+            y: Row index.
+            wall: Bitmask of the wall to add.
+        """
+        self.cell(x, y).walls |= wall

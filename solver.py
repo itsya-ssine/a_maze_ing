@@ -49,6 +49,9 @@ def shortest_path(
                 came_from[(nx, ny)] = (x, y)
                 queue.append((nx, ny))
 
+    if end not in came_from:
+        return []
+
     path: List[Point] = []
     cur: Point | None = end
     while cur:

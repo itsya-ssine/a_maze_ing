@@ -76,6 +76,7 @@ def main() -> NoReturn:
                 generator.generate_perfect(entry)
             else:
                 generator.generate_imperfect(entry)
+            generator.enforce_borders()
 
             path = shortest_path(maze, entry, exit_pt)
 
