@@ -61,13 +61,19 @@ class MazeGenerator:
                 if (
                     x < self.maze.width - 1
                     and cell.walls & RIGHT
+                    and not cell.marked
                 ):
-                    walls.append((x, y, RIGHT, LEFT))
+                    nx = x + 1
+                    if not self.maze.cell(nx, y).marked:
+                        walls.append((x, y, RIGHT, LEFT))
                 if (
                     y < self.maze.height - 1
                     and cell.walls & BOTTOM
+                    and not cell.marked
                 ):
-                    walls.append((x, y, BOTTOM, TOP))
+                    ny = y + 1
+                    if not self.maze.cell(x, ny).marked:
+                        walls.append((x, y, BOTTOM, TOP))
         self.rng.shuffle(walls)
         count: int = max(
             1, (self.maze.width * self.maze.height) // 10

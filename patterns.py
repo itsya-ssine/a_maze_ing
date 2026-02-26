@@ -18,7 +18,7 @@ def apply_42_pattern(
     Raises:
         RuntimeError: If entry or exit overlaps the pattern.
     """
-    cx = maze.width // 2 - 4
+    cx = maze.width // 2 - 3
     cy = maze.height // 2 - 2
 
     pattern = [
@@ -50,6 +50,7 @@ def apply_42_pattern(
             cell = maze.cell(x, y)
             cell.walls = 0xF
             cell.visited = True
+            cell.marked = True
             if y > 0 and maze.inside(x, y - 1):
                 maze.add_wall(x, y - 1, 0x4)
             if y < maze.height - 1 and maze.inside(x, y + 1):

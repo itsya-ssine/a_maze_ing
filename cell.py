@@ -15,3 +15,4 @@ class Cell:
 
     walls: int = TOP | RIGHT | BOTTOM | LEFT
     visited: bool = False
+    marked: bool = False
