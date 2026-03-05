@@ -55,7 +55,7 @@ def write_hex_maze(
     try:
         with open(path, "w", encoding="utf-8") as f:
             for row in maze.grid:
-                line = " ".join(
+                line = "".join(
                     f"{cell.walls:X}" for cell in row
                 )
                 f.write(line + "\n")
