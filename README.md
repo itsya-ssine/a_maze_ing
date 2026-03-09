@@ -130,44 +130,68 @@ The maze is rendered in the terminal as ASCII:
 | `3` | Cycle wall colours (white → blue → yellow → green → red) |
 | `4` | Quit |
 
-## Reusable code
+## Reusable `mazegen` package
 
-The maze generation logic lives in `generator.py` as the `MazeGenerator`
-class.  Together with `maze.py`, `cell.py`, and `solver.py`, it can be
-imported into any Python project.
+The maze generation logic is packaged as `mazegen`, a standalone Python
+package that can be installed with pip and imported into any project.
+
+### Installing the package
+
+```bash
+pip install mazegen-1.0.0-py3-none-any.whl
+```
+
+### Building the package from source
+
+```bash
+python3 -m venv .venv && source .venv/bin/activate
+pip install build
+python -m build          # produces dist/mazegen-1.0.0-py3-none-any.whl
+```
 
 ### Basic usage example
 
 ```python
-from maze import Maze
-from generator import MazeGenerator
-from solver import shortest_path
+from mazegen import Maze, MazeGenerator, shortest_path
 
+# 1. Create a grid
 maze = Maze(20, 15)
-gen = MazeGenerator(maze, seed=42)
-gen.generate_perfect((0, 0))           # or gen.generate_imperfect((0, 0))
-path = shortest_path(maze, (0, 0), (19, 14))
 
-# Access the grid
-for y in range(maze.height):
-    for x in range(maze.width):
-        cell = maze.cell(x, y)
-        print(f"({x},{y}) walls={cell.walls:#x}")
+# 2. Generate (seed is optional, for reproducibility)
+gen = MazeGenerator(maze, seed=42)
+gen.generate_perfect((0, 0))   # or gen.generate_imperfect((0, 0))
+gen.enforce_borders()
+
+# 3. Solve
+path = shortest_path(maze, (0, 0), (19, 14))
+print(path)   # [(0,0), (1,0), ...]
+
+# 4. Inspect any cell
+cell = maze.cell(5, 3)
+print(cell.walls)   # bitmask: TOP=1, RIGHT=2, BOTTOM=4, LEFT=8
 ```
 
 ### Custom parameters
 
-- **Size**: pass `width` and `height` to `Maze(width, height)`.
-- **Seed**: pass `seed=<int>` to `MazeGenerator` for reproducibility;
-  omit or pass `None` for a random maze.
-- **Perfect / imperfect**: call `generate_perfect(start)` or
-  `generate_imperfect(start)`.
+- **Size**: `Maze(width, height)` — set the number of columns and rows.
+- **Seed**: `MazeGenerator(maze, seed=123)` — pass an integer for
+  reproducibility; omit or pass `None` for a random maze.
+- **Perfect / imperfect**: call `generate_perfect(start)` for a maze
+  with a single solution, or `generate_imperfect(start)` for one with
+  loops (multiple paths).
 
-### Accessing the structure
+### Accessing the generated structure
 
-- `maze.cell(x, y).walls` — bitmask of closed walls (N=1, E=2, S=4, W=8).
+- `maze.cell(x, y).walls` — bitmask of closed walls
+  (TOP=1, RIGHT=2, BOTTOM=4, LEFT=8).
 - `maze.grid` — 2-D list of `Cell` objects (row-major).
-- `shortest_path(maze, start, end)` — returns a list of `(x, y)` tuples.
+- `maze.width` / `maze.height` — grid dimensions.
+
+### Accessing a solution
+
+- `shortest_path(maze, start, end)` — returns a list of `(x, y)` tuples
+  representing the shortest path from `start` to `end`, or an empty list
+  if no path exists.
 
 ## Resources
 

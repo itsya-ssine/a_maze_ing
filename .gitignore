@@ -18,6 +18,11 @@ ENV/
 .coverage
 htmlcov/
 
+# Build artifacts
+dist/
+build/
+*.egg-info/
+
 # Editors/OS
 *.swp
 *.swo

@@ -12,7 +12,7 @@ FLAKE8 := $(VENV)/bin/flake8
 
 # Install project dependencies
 install:
-	$(PYTHON) -m venv $(VENV)
+	$(PYTHON) -m venv  $(VENV)
 	$(PIP) install --upgrade pip
 	$(PIP) install flake8 mypy
 
@@ -43,3 +43,10 @@ lint:
 lint-strict:
 	$(FLAKE8) --exclude=$(VENV) .
 	$(MYPY) --exclude $(VENV) . --strict
+
+# Build the reusable mazegen package
+build-package:
+	$(PIP) install build
+	$(PY) -m build
+	cp dist/mazegen-1.0.0-py3-none-any.whl .
+	cp dist/mazegen-1.0.0.tar.gz .
