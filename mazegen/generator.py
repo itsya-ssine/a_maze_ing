@@ -74,14 +74,15 @@ class MazeGenerator:
                     ny = y + 1
                     if not self.maze.cell(x, ny).marked:
                         walls.append((x, y, BOTTOM, TOP))
+
         self.rng.shuffle(walls)
         count: int = max(
             1, (self.maze.width * self.maze.height) // 10
         )
 
         removed: int = 0
-        for i, (x, y, wall, opposite) in enumerate(walls):
-            if i >= count:
+        for x, y, wall, opposite in walls:
+            if removed >= count:
                 break
             nx, ny = x, y
             if wall == RIGHT:

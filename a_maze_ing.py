@@ -42,7 +42,7 @@ def main() -> NoReturn:
 
         width = cast(int, config["WIDTH"])
         height = cast(int, config["HEIGHT"])
-        small = width < 7 or height < 5
+        small = width < 9 or height < 7
 
         entry = cast(Tuple[int, int], config["ENTRY"])
         exit_pt = cast(Tuple[int, int], config["EXIT"])
@@ -58,6 +58,11 @@ def main() -> NoReturn:
             raise RuntimeError(
                 f"EXIT {exit_pt} out of range "
                 f"for {width}x{height} maze."
+            )
+
+        if entry[0] == exit_pt[0] and entry[1] == exit_pt[1]:
+            raise RuntimeError(
+                "ENTRY and EXIT are the same."
             )
 
         renderer = MazeRenderer()
@@ -130,4 +135,7 @@ def main() -> NoReturn:
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except Exception as e:
+        print(f"An excepected error occured: {e}")

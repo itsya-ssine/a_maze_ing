@@ -103,6 +103,12 @@ def _convert_config(
     except ValueError as exc:
         raise RuntimeError("WIDTH and HEIGHT must be integers") from exc
 
+    if width < 0:
+        raise RuntimeError("WIDTH must be a positive integer")
+
+    if height < 0:
+        raise RuntimeError("HEIGHT must be a positive integer")
+
     entry: Tuple[int, int] = _parse_coordinates(raw["ENTRY"], "ENTRY")
     exit_: Tuple[int, int] = _parse_coordinates(raw["EXIT"], "EXIT")
 

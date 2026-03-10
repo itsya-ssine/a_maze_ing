@@ -58,14 +58,9 @@ class MazeRenderer:
         """
         path_set = set(path) if path else set()
 
-        print("\033[H\033[J", end="")
-
         wc = self.wall_color
         rst = Colors.RESET
-        top_border = (
-            wc + "+" + ("---+" * maze.width) + rst
-        )
-        print(top_border)
+        print(wc + "+" + ("---+" * maze.width) + rst)
 
         for y in range(maze.height):
             top = wc + "|" + rst
@@ -80,7 +75,7 @@ class MazeRenderer:
                     body = Colors.EXIT + " X " + rst
                 elif (x, y) in path_set:
                     body = Colors.PATH + " · " + rst
-                elif cell.walls == 0xF:
+                elif cell.marked:
                     ft = Colors.FORTY_TWO
                     body = ft + "███" + rst
                 else:
